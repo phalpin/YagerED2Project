@@ -1,5 +1,5 @@
 var log = require('./Log');
-var b = require('bonescript');
+var b = require('octalbonescript');
 
 var readFile = function(){
     var val = fs.readFileSync(configFilePath, { encoding: fileEncoding });
@@ -64,15 +64,9 @@ module.exports = function(options){
     };
 
     var afterRot = function(success){
-        if(success.value === true){
-            curRotation = reqRotation;
-            reqRotation = -1;
-            doCallbacks(curRotation, afterCallbacks);
-        }
-        else{
-            log.e("Failure to rotate to " + reqRotation + " degrees");
-            reqRotation = -1;
-        }
+        curRotation = reqRotation;
+        reqRotation = -1;
+        doCallbacks(curRotation, afterCallbacks);
     };
     //endregion
 

@@ -17,7 +17,7 @@
 	
 	"Fingers": {
 		"TestFinger": {
-			"Debug": false,
+			"Debug": true,
 		  	"MinRotation": 0,
 		  	"MaxRotation": 180,
 			"Servos":[
@@ -28,17 +28,17 @@
 			]
 		},
 
-	  "TestFingerTwo": {
-		"Debug": false,
-		"MinRotation": 0,
-		"MaxRotation": 180,
-		"Servos":[
-		  {
-			"Pin":"P9_21",
-			"ServoConfig":"Parallax.StandardServo"
-		  }
-		]
-	  }
+        "TestFinger2": {
+            "Debug": true,
+            "MinRotation": 0,
+            "MaxRotation": 180,
+            "Servos":[
+                {
+                    "Pin":"P9_16",
+                    "ServoConfig":"Parallax.StandardServo"
+                }
+            ]
+        }
 
 	}
 }

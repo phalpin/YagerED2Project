@@ -88,7 +88,8 @@ for(var k in cfg.Fingers){
 
 var messageType = {
     COMMAND: 0,
-    FLEXION: 1
+    FLEXION: 1,
+    MULTIFLEXION: 2
 };
 
 var handleCommand = function(command){
@@ -102,6 +103,26 @@ var handleCommand = function(command){
 var handleFlexion = function(command){
     if(_fingers[command.Finger]){
         _fingers[command.Finger].flex(command.FlexAmount);
+    }
+};
+
+/*
+[
+    {
+        Finger: name,
+        FlexAmount: amount
+    },
+     {
+         Finger: name,
+         FlexAmount: amount
+     }
+]
+
+ */
+
+var handleMultiFlexion = function(command){
+    for(var i = 0; i < command.length; i++){
+        handleFlexion(command[i]);
     }
 };
 
@@ -134,79 +155,13 @@ wss.on('connection', function(ws){
             case messageType.FLEXION:
                 handleFlexion(cmd.Command);
                 break;
+            case messageType.MULTIFLEXION:
+                handleMultiFlexion(cmd.Command);
+                break;
         }
     });
     //endregion
 });
-
-
-
-
-/*
-//region Servo Creation & Management.
-var readFile = function(){
-    var val = fs.readFileSync(configFilePath, { encoding: fileEncoding });
-    return JSON.parse(val);
-};
-var updateFile = function(amount){
-    var rotation = {
-        rotation: amount
-    };
-
-    fs.writeFileSync(configFilePath, JSON.stringify(rotation), { encoding: fileEncoding }, function(err){
-        if(err){
-            log.e("Failed to write to rotation file", err);
-        }
-        else{
-            log.i("Saved rotation information for next run.");
-        }
-    });
-};
-var oldValue = readFile();
-
-var testServo = new Servo({
-    Pin: 'P9_14',
-    Debug: true,
-    StartingRotation: oldValue.rotation
-});
-
-//endregion
-
-wss.on('connection', function(ws){
-    var rotOnConn = testServo.getRotation();
-    ws.send(testServo.getRotation().toString());
-    log.i('Received new connection, sent original rotation:', rotOnConn);
-
-    ws.on('message', function(message){
-        log.i("message:", message);
-        switch(message.toLowerCase()){
-            case 'exit':
-                process.exit(0);
-                break;
-            case 'increment':
-                testServo.increaseBy(1);
-                break;
-            case 'decrement':
-                testServo.increaseBy(-1);
-                break;
-            default:
-                testServo.rotate(message);
-                break;
-        }
-    });
-
-    testServo.afterRotate(function(deg){
-        log.i("Rotation state after the call: " + deg + " degrees");
-        updateFile(deg);
-        ws.send(deg.toString());
-        //testServo2.rotate(deg);
-    });
-
-    testServo.beforeRotate(function(deg){
-        log.i("Rotation state prior to call: " + deg + " degrees");
-    });
-});
-*/
 
 
 process.on('exit', function(code){

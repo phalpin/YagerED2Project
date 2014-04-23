@@ -1,18 +1,23 @@
 var webApp = angular.module('yager', []);
+var curClient;
 
 webApp.controller('fingerCtrl', [
-    '$scope', 'wsSvc',
-    function($scope, wsSvc){
+    '$scope', 'wsSvc', '$rootScope',
+    function($scope, wsSvc, $rootScope){
         $scope.client = wsSvc.start();
 
         $scope.fingers = {};
 
         $scope.client.onopen = function(){
             console.log("Connection open");
+            $rootScope.connectionState = "CONNECTED!";
+            curClient = $scope.client;
         };
 
         $scope.client.onclose = function(){
             console.log("Connection now closed.");
+            $rootScope.connectionState = "DISCONNECTED";
+            $scope.apply();
         };
 
         $scope.client.onmessage = function(message){
@@ -77,7 +82,7 @@ webApp.service('wsSvc', [
     function(){
         return {
             start: function(){
-                var baseUrl = "192.168.7.2:8079";
+                var baseUrl = "192.168.100.150:8079";
                 return new WebSocket("ws://" + baseUrl);
             }
         }
