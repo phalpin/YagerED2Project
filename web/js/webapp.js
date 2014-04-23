@@ -8,6 +8,9 @@ webApp.controller('fingerCtrl', [
 
         $scope.fingers = {};
 
+        $scope.massSelectedFingers = [];
+        $scope.massFlexion = 0;
+
         $scope.client.onopen = function(){
             console.log("Connection open");
             $rootScope.connectionState = "CONNECTED!";
@@ -43,7 +46,8 @@ webApp.controller('fingerCtrl', [
 
         $scope.commandType = {
             COMMAND: 0,
-            FLEXION: 1
+            FLEXION: 1,
+            MULTIFLEXION: 2
         };
 
         $scope.getDto = function(type){
@@ -73,7 +77,30 @@ webApp.controller('fingerCtrl', [
                 var finger = $scope.fingers[fingerName];
                 $scope.sendFlexion(finger.name, finger.requestedFlexion);
             }
-        }
+        };
+
+        $scope.massApplyFlexion = function(){
+            var dto = $scope.getDto($scope.commandType.MULTIFLEXION);
+            dto.Command = [];
+            for (var i = 0; i < $scope.massSelectedFingers.length; i++){
+                var finger = $scope.massSelectedFingers[i];
+                dto.Command.push({
+                    Finger: finger.name,
+                    FlexAmount: $scope.massFlexion
+                });
+            }
+
+            console.log(dto);
+            $scope.client.send(JSON.stringify(dto));
+        };
+
+        $scope.toggleMassFlexion = function(finger){
+            var index = $scope.massSelectedFingers.indexOf(finger);
+            if(index == -1) $scope.massSelectedFingers.push(finger);
+            else {
+                $scope.massSelectedFingers.splice(index, 1);
+            }
+        };
 
     }
 ]);
@@ -88,30 +115,3 @@ webApp.service('wsSvc', [
         }
     }
 ]);
-
-/*
-var btnRotateUp = $('#rotate-up');
-var btnRotateDown = $('#rotate-down');
-var frmRotateManual = $('#rotate-manual');
-var txtRotateAmt = $('#rotate-requested-input');
-var lblRotateCur = $('#servo-rotation');
-var lblServoName = $('#servo-name');
-
-frmRotateManual.submit(function(event){
-    var rotAmt = txtRotateAmt.val();
-    testClient.Client.send(rotAmt);
-    event.preventDefault();
-});
-
-
-
-
-
-btnRotateUp.click(function(){
-    testClient.Client.send('increment');
-});
-
-btnRotateDown.click(function(){
-    testClient.Client.send('decrement');
-});
-*/

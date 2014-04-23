@@ -26,15 +26,26 @@
 
         <div class="container">
             <div class="fingerContainer" data-ng-controller="fingerCtrl">
+
+                <!-- Mass Finger Control -->
+                <div class="jumbotron col-lg-12 col-md-12">
+                    <h2>Mass Update</h2>
+                    <input type="number" data-ng-model="massFlexion" data-ng-disabled="massSelectedFingers.length == 0"/>
+                    <button data-ng-click="massApplyFlexion()" data-ng-disabled="massSelectedFingers.length == 0">Mass Apply Flexion</button>
+                </div>
+
+                <!-- Individual Finger Control -->
                 <div class="jumbotron col-lg-4 col-md-4" data-ng-repeat="(name, finger) in fingers">
                     <h2>{{name}}</h2>
                     <div>
                         <form>
+                        <input type="checkbox" data-ng-click="toggleMassFlexion(finger)" />
                         <input type="number" data-ng-model="finger.requestedFlexion" />
                         <input type="submit" data-ng-click="applyFlexion(name)" value="Send Flexion">
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
 
