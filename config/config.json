@@ -3,25 +3,21 @@
 
 	"ServoConfigs": {
 
-	  	"Futaba":{
-			"UNKNOWN": {
-				"min": 0.028,
-				"max": 0.140
-			}
+	  	"Futaba.UNKNOWN":{
+		  "min": 0.028,
+		  "max": 0.140
 		},
 
 
-		"Parallax":{
-			"StandardServo":{
-				"min": 0.028,
-				"max": 0.137
-			}
+		"Parallax.StandardServo":{
+		  "min": 0.028,
+		  "max": 0.137
 		}
 	},
 	
 	"Fingers": {
-		"Unnamed": {
-			"Debug": true,
+		"TestFinger": {
+			"Debug": false,
 		  	"MinRotation": 0,
 		  	"MaxRotation": 180,
 			"Servos":[
@@ -30,6 +26,19 @@
 				  	"ServoConfig":"Parallax.StandardServo"
 				}
 			]
-		}
+		},
+
+	  "TestFingerTwo": {
+		"Debug": false,
+		"MinRotation": 0,
+		"MaxRotation": 180,
+		"Servos":[
+		  {
+			"Pin":"P9_21",
+			"ServoConfig":"Parallax.StandardServo"
+		  }
+		]
+	  }
+
 	}
 }

@@ -16,19 +16,26 @@ module.exports = function(name, cfg){
     options.Debug = cfg.Debug;
     options.MinRotation = cfg.MinRotation;
     options.MaxRotation = cfg.MaxRotation;
+    options.StartingFlexion = cfg.StartingFlexion;
     options.Servo = new Servo({
         Pin: cfg.Servos[0].Pin,
         Debug: options.Debug,
-        min: options.MinRotation,
-        max: options.MaxRotation
+        MinRotation: options.MinRotation,
+        MaxRotation: options.MaxRotation,
+        Min: options.Min,
+        Max: options.Max
     });
 
+    //if(options.Debug) log.i("Finger '" + name + "' initialized with config:", cfg);
+    //if(options.Debug) log.i('Options:',options);
+
+    var modifier = 1.8;
 
     var callbacks = [];
 
     var doCallbacks = function(amount){
         for(var cb in callbacks){
-            callbacks[cb](amount);
+            callbacks[cb](name, amount);
         }
     };
 
@@ -41,7 +48,6 @@ module.exports = function(name, cfg){
     };
 
     var getRotationDegrees = function(percentage){
-        //return percentage / .00555556;
         return percentage * modifier;
     };
 
@@ -82,9 +88,16 @@ module.exports = function(name, cfg){
          * @param amount Percentage you want to flex a given finger (0 to 100)
          */
         flex: function(amount){
-            debug(function(){ log.i("Requested Rotation of finger " + options.Name + ": " + amount);});
-            hostServo.rotate(getRotationDegrees(amount));
-        }
+            if(options.Debug) log.i("Requested Flexion of finger " + name + ": " + amount);
+            var rot = getRotationDegrees(amount);
+            options.Servo.rotate(rot);
+        },
+
+        onFlex: function(callback){
+            callbacks.push(callback);
+        },
+
+        currentFlexion: options.StartingFlexion
     };
 
     return retVal;

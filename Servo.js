@@ -11,18 +11,19 @@ module.exports = function(options){
         Pin: 'P9_14',
         Debug: false,
         StartingRotation: 0,
-        min: 0.028,
-        max: 0.137
+        Min: 0.028,
+        Max: 0.137
     };
 
     if(options){
         if(options.Pin) opts.Pin = options.Pin;
         if(options.Debug) opts.Debug = options.Debug;
         if(options.StartingRotation) opts.StartingRotation = parseInt(options.StartingRotation);
-        if(options.min) opts.min = options.min;
-        if(options.max) opts.max = options.max;
+        if(options.Min) opts.Min = options.Min;
+        if(options.Max) opts.Max = options.Max;
+        if(options.MinRotation !== undefined) opts.MinRotation = options.MinRotation;
+        if(options.MaxRotation !== undefined) opts.MaxRotation = options.MaxRotation;
     }
-
 
     var SERVO = opts.Pin;
     var SPEED = 60;
@@ -34,17 +35,14 @@ module.exports = function(options){
     //region Helper Methods
     var getRotAmount = function(req){
         var requestedRotation = parseFloat(req);
+
         if (requestedRotation > 180){
             requestedRotation %= 180;
         }
-        //Futaba Servos
-        var min = 0.028, max = 0.140;
 
-        //Parallax Servos
-        //var min = 0.028, max = 0.137;
-        var diff = max - min;
+        var diff = opts.Max - opts.Min;
         var adj = diff / 180.0;
-        var calc = min + (requestedRotation * adj);
+        var calc = opts.Min + (requestedRotation * adj);
         return calc;
     };
 
@@ -87,12 +85,12 @@ module.exports = function(options){
          * @param amount Value (degrees) from 0 to 180 degrees.
          */
         rotate: function(amount){
-            var amt = parseInt(amount);
+            var amt = amount;
             beforeRot(amt);
             if(amt != curRotation){
                 var rot = getRotAmount(amount);
                 debug(function(){
-                    log.i("Requested Rotation: ", process.argv[2]);
+                    log.i("Requested Rotation:", amount);
                     log.i("Evaluated PWM:", rot);
                 });
                 b.analogWrite(SERVO, rot, SPEED, afterRot);
@@ -136,6 +134,6 @@ module.exports = function(options){
     };
 
     b.pinMode(SERVO, b.OUTPUT);
-    log.i('Servo initialized with pin:', opts.Pin, ' to angle:', opts.StartingRotation);
+    debug(function(){log.i('Servo initialized with pin:', opts.Pin, ' to angle:', opts.StartingRotation);});
     return retVal;
 };

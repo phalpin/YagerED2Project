@@ -13,49 +13,25 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="js/vendor/angular.min.js"></script>
 
-    <body>
+    <body data-ng-app="yager">
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <div class="container">
-
-            <div class="col-md-12">
-                <div class="jumbotron">
-
-                    <div class="col-md-6">
-                        <h2 id="servo-name">Servo 1</h2>
-                        <h4 id="servo-rotation">Current Rotation</h4>
+            <div class="fingerContainer" data-ng-controller="fingerCtrl">
+                <div class="jumbotron col-lg-4 col-md-4" data-ng-repeat="(name, finger) in fingers">
+                    <h2>{{name}}</h2>
+                    <div>
+                        <form>
+                        <input type="number" data-ng-model="finger.requestedFlexion" />
+                        <input type="submit" data-ng-click="applyFlexion(name)" value="Send Flexion">
+                        </form>
                     </div>
-
-                    <div class="col-md-6">
-
-                        <!-- Up and Down Controls -->
-                        <div class="col-md-6">
-                            <btn id="rotate-up" class="btn btn-success btn-block">Rotate Up</btn>
-                            <btn id="rotate-down" class="btn btn-danger btn-block">Rotate Down</btn>
-                        </div>
-
-                        <!-- Manual Control -->
-                        <div class="col-md-6">
-                            <form id="rotate-manual">
-                            <div class="input-group">
-                                <input type="number" id="rotate-requested-input" class="form-control" />
-                                <span class="input-group-btn">
-                                    <input type="submit" id="rotate-requested" class="btn btn-primary btn-block" value="Rotate"></btn>
-                                </span>
-                            </div>
-                            </form>
-                        </div>
-
-                    </div>
-                    &nbsp;
-
-
                 </div>
             </div>
-
         </div>
 
 

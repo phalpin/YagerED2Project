@@ -1,15 +1,90 @@
-var baseUrl = "192.168.7.2:8079";
+var webApp = angular.module('yager', []);
 
-function Client(url){
-    var retVal = {};
-    var wsClient = new WebSocket("ws://" + url);
+webApp.controller('fingerCtrl', [
+    '$scope', 'wsSvc',
+    function($scope, wsSvc){
+        $scope.client = wsSvc.start();
 
-    retVal.Client = wsClient;
+        $scope.fingers = {};
 
-    return retVal;
-}
+        $scope.client.onopen = function(){
+            console.log("Connection open");
+        };
 
-var testClient = new Client(baseUrl);
+        $scope.client.onclose = function(){
+            console.log("Connection now closed.");
+        };
+
+        $scope.client.onmessage = function(message){
+            console.log("Received message:", message);
+            var obj = JSON.parse(message.data);
+            if(obj.Name){
+                $scope.fingers[obj.Name].currentFlexion = obj.Flexion;
+                $scope.fingers[obj.Name].requestedFlexion = obj.Flexion;
+            }
+            else{
+                for(var k in obj){
+                    var curObj = obj[k];
+                    curObj.name = k;
+                    curObj.requestedFlexion = curObj.currentFlexion;
+                    $scope.fingers[k] = curObj;
+                }
+            }
+
+
+            $scope.$apply();
+            console.log("Resultant fingers: ", $scope.fingers);
+        };
+
+        $scope.commandType = {
+            COMMAND: 0,
+            FLEXION: 1
+        };
+
+        $scope.getDto = function(type){
+            return {
+                Type: type,
+                Command: {}
+            };
+        };
+
+        $scope.sendCommand = function(command){
+            var dto = $scope.getDto($scope.commandType.COMMAND);
+            dto.Command = command;
+            $scope.client.send(JSON.stringify(dto));
+        };
+
+        $scope.sendFlexion = function(name, flexion){
+            var dto = $scope.getDto($scope.commandType.FLEXION);
+            dto.Command = {
+                Finger: name,
+                FlexAmount: flexion
+            };
+            $scope.client.send(JSON.stringify(dto));
+        };
+
+        $scope.applyFlexion = function(fingerName){
+            if($scope.fingers[fingerName]){
+                var finger = $scope.fingers[fingerName];
+                $scope.sendFlexion(finger.name, finger.requestedFlexion);
+            }
+        }
+
+    }
+]);
+
+webApp.service('wsSvc', [
+    function(){
+        return {
+            start: function(){
+                var baseUrl = "192.168.7.2:8079";
+                return new WebSocket("ws://" + baseUrl);
+            }
+        }
+    }
+]);
+
+/*
 var btnRotateUp = $('#rotate-up');
 var btnRotateDown = $('#rotate-down');
 var frmRotateManual = $('#rotate-manual');
@@ -23,18 +98,9 @@ frmRotateManual.submit(function(event){
     event.preventDefault();
 });
 
-testClient.Client.onopen = function(){
-    console.log("Connection open to " + baseUrl);
-};
 
-testClient.Client.onclose = function(){
-    console.log("Connection from " + baseUrl + " now closed.");
-};
 
-testClient.Client.onmessage = function(message){
-    console.log("Received message:", message);
-    lblRotateCur.text(message.data + " degrees");
-};
+
 
 btnRotateUp.click(function(){
     testClient.Client.send('increment');
@@ -43,3 +109,4 @@ btnRotateUp.click(function(){
 btnRotateDown.click(function(){
     testClient.Client.send('decrement');
 });
+*/
