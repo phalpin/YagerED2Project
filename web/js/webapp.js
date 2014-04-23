@@ -1,4 +1,4 @@
-var baseUrl = "192.168.0.175:8079";
+var baseUrl = "192.168.7.2:8079";
 
 function Client(url){
     var retVal = {};

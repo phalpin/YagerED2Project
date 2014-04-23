@@ -1,16 +1,26 @@
 var log = require('./Log');
 var b = require('bonescript');
 
+var readFile = function(){
+    var val = fs.readFileSync(configFilePath, { encoding: fileEncoding });
+    return JSON.parse(val);
+};
+
 module.exports = function(options){
     var opts = {
         Pin: 'P9_14',
         Debug: false,
-        StartingRotation: 0
+        StartingRotation: 0,
+        min: 0.028,
+        max: 0.137
     };
+
     if(options){
         if(options.Pin) opts.Pin = options.Pin;
         if(options.Debug) opts.Debug = options.Debug;
         if(options.StartingRotation) opts.StartingRotation = parseInt(options.StartingRotation);
+        if(options.min) opts.min = options.min;
+        if(options.max) opts.max = options.max;
     }
 
 
@@ -27,7 +37,11 @@ module.exports = function(options){
         if (requestedRotation > 180){
             requestedRotation %= 180;
         }
-        var min = 0.028, max = 0.137;
+        //Futaba Servos
+        var min = 0.028, max = 0.140;
+
+        //Parallax Servos
+        //var min = 0.028, max = 0.137;
         var diff = max - min;
         var adj = diff / 180.0;
         var calc = min + (requestedRotation * adj);
