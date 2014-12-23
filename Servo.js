@@ -10,7 +10,7 @@ module.exports = function(options){
     if(options){
         if(options.Pin) opts.Pin = options.Pin;
         if(options.Debug) opts.Debug = options.Debug;
-        if(options.StartingRotation) opts.StartingRotation = options.StartingRotation;
+        if(options.StartingRotation) opts.StartingRotation = parseInt(options.StartingRotation);
     }
 
 
@@ -73,8 +73,9 @@ module.exports = function(options){
          * @param amount Value (degrees) from 0 to 180 degrees.
          */
         rotate: function(amount){
-            beforeRot(amount);
-            if(amount != curRotation){
+            var amt = parseInt(amount);
+            beforeRot(amt);
+            if(amt != curRotation){
                 var rot = getRotAmount(amount);
                 debug(function(){
                     log.i("Requested Rotation: ", process.argv[2]);
@@ -116,11 +117,11 @@ module.exports = function(options){
          * @param amount
          */
         increaseBy: function(amount){
-            retVal.rotate(curRotation + 90);
+            retVal.rotate(curRotation + amount);
         }
     };
 
     b.pinMode(SERVO, b.OUTPUT);
-
+    log.i('Servo initialized with pin:', opts.Pin, ' to angle:', opts.StartingRotation);
     return retVal;
 };

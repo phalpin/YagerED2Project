@@ -38,19 +38,32 @@ var testServo = new Servo({
 //endregion
 
 wss.on('connection', function(ws){
-    ws.on('message', function(message){
-        if(message.toLowerCase() === 'exit'){
-            process.exit(0);
-        }
-        testServo.rotate(message);
-    });
+    var rotOnConn = testServo.getRotation();
+    ws.send(testServo.getRotation().toString());
+    log.i('Received new connection, sent original rotation:', rotOnConn);
 
-    ws.send('welcome to Yager');
+    ws.on('message', function(message){
+        log.i("message:", message);
+        switch(message.toLowerCase()){
+            case 'exit':
+                process.exit(0);
+                break;
+            case 'increment':
+                testServo.increaseBy(1);
+                break;
+            case 'decrement':
+                testServo.increaseBy(-1);
+                break;
+            default:
+                testServo.rotate(message);
+                break;
+        }
+    });
 
     testServo.afterRotate(function(deg){
         log.i("Rotation state after the call: " + deg + " degrees");
         updateFile(deg);
-        ws.send(deg);
+        ws.send(deg.toString());
     });
 
     testServo.beforeRotate(function(deg){

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Yager ED2 Project</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class="container">
+
+            <div class="col-md-12">
+                <div class="jumbotron">
+
+                    <div class="col-md-6">
+                        <h2 id="servo-name">Servo 1</h2>
+                        <h4 id="servo-rotation">Current Rotation</h4>
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <!-- Up and Down Controls -->
+                        <div class="col-md-6">
+                            <btn id="rotate-up" class="btn btn-success btn-block">Rotate Up</btn>
+                            <btn id="rotate-down" class="btn btn-danger btn-block">Rotate Down</btn>
+                        </div>
+
+                        <!-- Manual Control -->
+                        <div class="col-md-6">
+                            <form id="rotate-manual">
+                            <div class="input-group">
+                                <input type="number" id="rotate-requested-input" class="form-control" />
+                                <span class="input-group-btn">
+                                    <input type="submit" id="rotate-requested" class="btn btn-primary btn-block" value="Rotate"></btn>
+                                </span>
+                            </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    &nbsp;
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Javascript Includes -->
+        <script src="js/jquery-2.1.3.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/webapp.js"></script>
+    </body>
+</html>
