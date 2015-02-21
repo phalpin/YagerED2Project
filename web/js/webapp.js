@@ -6,8 +6,11 @@ webApp.controller('fingerCtrl', [
     function($scope, wsSvc, $rootScope){
         $scope.client = wsSvc.start();
 
+        $scope.timeBetweenLoops = 100;
+        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, false);
         $scope.fingers = {};
 
+        $scope.shouldUpdateFromLeapMotion = false;
         $scope.massSelectedFingers = [];
         $scope.massFlexion = 0;
 
@@ -100,6 +103,11 @@ webApp.controller('fingerCtrl', [
             else {
                 $scope.massSelectedFingers.splice(index, 1);
             }
+        };
+
+
+        $scope.beginUpdatingFromLeapmotion = function(){
+
         };
 
     }
