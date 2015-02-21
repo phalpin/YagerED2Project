@@ -109,7 +109,7 @@ webApp.service('wsSvc', [
     function(){
         return {
             start: function(){
-                var baseUrl = "192.168.100.150:8079";
+                var baseUrl = "192.168.100.101:8079";
                 return new WebSocket("ws://" + baseUrl);
             }
         }
