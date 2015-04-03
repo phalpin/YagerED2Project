@@ -30,7 +30,7 @@
                 <div>
                     <div data-ng-if="shouldUpdateFromLeapMotion">Updating from LeapMotion</div>
                     <div data-ng-if="!shouldUpdateFromLeapMotion">Not Updating from LeapMotion</div>
-                    <button data-ng-click="beginUpdatingFromLeapmotion()">Toggle Updating from LeapMotion</button>
+                    <button data-ng-click="toggleLeapmotionUpdates()">Toggle Updating from LeapMotion</button>
 
                 </div>
 
@@ -58,11 +58,10 @@
 
 
         <!-- Javascript Includes -->
-        <script src="../LeapMotion/scripts/mainloop.js"></script>
-        <script src="../LeapMotion/scripts/app.js"></script>
         <script src="../LeapMotion/scripts/leap-0.6.4.js"></script>
         <script src="../LeapMotion/scripts/leap-plugins-0.1.10.js"></script>
         <script src="../LeapMotion/scripts/three.min.js"></script>
+        <script src="../LeapMotion/scripts/mainloop.js"></script>
         <script src="js/jquery-2.1.3.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/plugins.js"></script>
