@@ -1,7 +1,7 @@
 var mainLoop = function(duration, displayBonehand){
 
     //var sceneAvg = duration;
-    var sceneAvg = 1;
+    var sceneAvg = duration;
 
     var sceneIter = 0;
     var iters = {
@@ -89,8 +89,9 @@ var mainLoop = function(duration, displayBonehand){
         };
 
         for(var i = 0; i < frame.hands.length; i++){
+            var tgtHand = retObj[handType(frame.hands[i])] = getFingers(frame.hands[i]);
 
-            if(frame.hands[i]) {
+            if(tgtHand) {
                 var rollAmt = parseInt(frame.hands[i].roll() * (180 / Math.PI));
                 var rollFactor = undefined;
                 if(Math.abs(rollAmt) > 90){
@@ -98,10 +99,8 @@ var mainLoop = function(duration, displayBonehand){
                 }
 
                 rollFactor = 100 - (rollAmt + 90)/1.8;
-                console.log("Roll:", rollAmt);
-                console.log("RollFactor:", rollFactor);
+                tgtHand.Wrist = { Flexion: rollFactor };
             }
-            retObj[handType(frame.hands[i])] = getFingers(frame.hands[i]);
         }
 
         return retObj;
@@ -109,20 +108,19 @@ var mainLoop = function(duration, displayBonehand){
 
     var ref = this;
 
-    var tempHands = { Right: null, Left: null };
+    var tempHands = { Right: {}, Left: {} };
 
     var applyToTempHands = function(hands){
         var applyToTempHandFinger = function(hand, which, finger){
             if(!tempHands){
-                tempHands = { Right: null, Left: null };
+                tempHands = { Right: {}, Left: {} };
             }
 
             if(!tempHands[which][finger]){
                 tempHands[which][finger] = 0;
             }
 
-            tempHands[which][finger] += hand[finger];
-            iters[which]++;
+            tempHands[which][finger] += hand[which][finger].Flexion;
         };
 
         var applyFingers = function(hands, hand){
@@ -131,6 +129,8 @@ var mainLoop = function(duration, displayBonehand){
             applyToTempHandFinger(hands, hand, "Middle");
             applyToTempHandFinger(hands, hand, "Ring");
             applyToTempHandFinger(hands, hand, "Pinky");
+            applyToTempHandFinger(hands, hand, "Wrist");
+            iters[hand]++;
         };
 
         if(hands.Right != null){
@@ -146,31 +146,67 @@ var mainLoop = function(duration, displayBonehand){
     };
 
     var getTempHandAvg = function(){
+        var hands = {
+            Right: {}, Left: {}
+        };
 
+        var adjustFinger = function(min, max, cur){
+            var normalized = ((cur - min)/(max-min))*100;
+            if(normalized > 100) normalized = 100;
+            else if (normalized < 0) normalized = 0;
+            return normalized;
+        };
+
+        for(var k in tempHands){
+            var hand = tempHands[k];
+            for(var j in hand){
+                var finger = hand[j];
+                finger /= iters[k];
+                switch(j){
+                    case "Thumb":
+                        finger = adjustFinger(65, 100, finger);
+                        break;
+                    case "Pointer":
+                        finger = adjustFinger(1.42, 100, finger);
+                        break;
+                    case "Middle":
+                        finger = adjustFinger(8, 100, finger);
+                        break;
+                    case "Ring":
+                        finger = adjustFinger(12, 100, finger);
+                        break;
+                    case "Pinky":
+                        finger = adjustFinger(22, 100, finger);
+                        break;
+                }
+                finger = finger < 0 ? 0 : finger;
+                hands[k][j] = { Flexion: finger };
+            }
+            iters[k] = 0;
+        }
+
+        tempHands = { Right: {}, Left: {} };
+
+        return hands;
     };
 
     var updateHands = function(hands){
+        if(!hands.Right || hands.Right.Middle == undefined) hands.Right = null;
+        if(!hands.Left || hands.Left.Middle == undefined) hands.Left = null;
         ref.Hands = hands;
+        notifyObservers("update");
     };
 
     var theLoop = Leap.loop(function(frame) {
 
+        var hands = parseHands(frame);
+        applyToTempHands(hands);
 
-        if(shouldExecute()){
-            var hands = parseHands(frame);
+        if(shouldExecute()) {
+            var hands = getTempHandAvg();
             updateHands(hands);
-            //if(tempHands != null){
-                //var hands = getTempHandAvg();
-                //updateHands(hands);
-            //}
-            //else{
-                //updateHands(hands);
-            //}
-
-        }
-        else{
             //var hands = parseHands(frame);
-            //applyToTempHands(hands);
+            updateHands(hands);
         }
 
         sceneIter++;
@@ -179,7 +215,9 @@ var mainLoop = function(duration, displayBonehand){
     if(displayBonehand){
         theLoop.use('boneHand', {
             targetEl: document.body,
-            arm: false
+            arm: false,
+            boneColor: (new THREE.Color).setHex(0x111111),
+            jointColor: (new THREE.Color).setHex(0x5daa00)
         });
     }
 
@@ -197,12 +235,20 @@ var mainLoop = function(duration, displayBonehand){
     this.callbacks = {};
     this.callbacks[this.Events.FlexionUpdate] = [];
 
+    function notifyObservers(event){
+        for(var i = 0; i < ref.callbacks[event].length; i++){
+            try{
+                ref.callbacks[event][i]();
+            }
+            catch(ex){
+                console.warn('Exception in Notification:', ex);
+            }
+        }
+    }
 
     this.on = function(event, callback){
-        var tgt = this.callbacks[this.Events.FlexionUpdate];
-        if(!tgt) tgt = [];
-
-        tgt.push(callback);
+        if(!this.callbacks[event]) this.callbacks[event] = [];
+        this.callbacks[event].push(callback);
     };
 
 

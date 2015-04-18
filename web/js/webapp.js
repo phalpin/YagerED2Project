@@ -6,13 +6,19 @@ webApp.controller('fingerCtrl', [
     function($scope, wsSvc, $rootScope, $timeout){
         $scope.client = wsSvc.start();
 
-        $scope.timeBetweenLoops = 50;
-        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, false);
+        $scope.timeBetweenLoops = 5;
         $scope.fingers = {};
 
         $scope.shouldUpdateFromLeapMotion = false;
         $scope.massSelectedFingers = [];
         $scope.massFlexion = 0;
+
+        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, true);
+        $scope.leapMotion.on('update', function(){
+            if($scope.shouldUpdateFromLeapMotion){
+                $scope.leapmotionUpdate();
+            }
+        });
 
         $scope.client.onopen = function(){
             //console.log("Connection open");
@@ -166,15 +172,7 @@ webApp.controller('fingerCtrl', [
         };
 
         $scope.leapmotionUpdate = function(){
-            if($scope.shouldUpdateFromLeapMotion){
-                console.log($scope.leapMotion.Hands);
-                $scope.handleHands($scope.leapMotion.Hands);
-                $timeout(function(){
-                    if($scope.shouldUpdateFromLeapMotion){
-                        $scope.leapmotionUpdate();
-                    }
-                }, $scope.timeBetweenLoops);
-            }
+            $scope.handleHands($scope.leapMotion.Hands);
         };
 
         $scope.toggleLeapmotionUpdates = function(){
