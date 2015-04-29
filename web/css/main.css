@@ -302,3 +302,12 @@ textarea {
         page-break-after: avoid;
     }
 }
+
+.no-float {
+    float: none;
+}
+
+div#bonehanddisplay.col-lg-8 canvas.leap-boneHand{
+    width: 740px !important;
+    height: 277px !important;
+}
