@@ -22,6 +22,8 @@ div#display {
 div#animation-display {
     position: absolute;
     margin: 0 auto;
+    bottom: 75px;
+    left: 350px;
 }
 
 div#display canvas.leap-boneHand{
