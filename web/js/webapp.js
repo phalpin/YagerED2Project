@@ -6,14 +6,15 @@ webApp.controller('fingerCtrl', [
     function($scope, wsSvc, $rootScope, $timeout){
         $scope.client = wsSvc.start();
 
-        $scope.timeBetweenLoops = 5;
+        $scope.timeBetweenLoops = 10;
         $scope.fingers = {};
 
         $scope.shouldUpdateFromLeapMotion = false;
         $scope.massSelectedFingers = [];
         $scope.massFlexion = 0;
 
-        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, true);
+        //$scope.leapMotion = new mainLoop($scope.timeBetweenLoops, {display: true, targetEl: $('#boneHandDisplay')[0]});
+        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, {display: true, targetEl: document.body});
         $scope.leapMotion.on('update', function(){
             if($scope.shouldUpdateFromLeapMotion){
                 $scope.leapmotionUpdate();

@@ -1,6 +1,9 @@
 setTimeout(function(){
     var time = 100;
-    var webApp = new mainLoop(time, true);
+    var webApp = new mainLoop(time, {
+        display: true,
+        targetEl: document.getElementById("boneHandDisplay")
+    });
 
     var reportFinger = function(hand, finger){
         console.log("   [" + finger + "]:", hand[finger]);

@@ -36,9 +36,14 @@
 
                 <!-- Mass Finger Control -->
                 <div class="jumbotron col-lg-12 col-md-12">
-                    <h2>Mass Update</h2>
-                    <input type="number" data-ng-model="massFlexion" data-ng-disabled="massSelectedFingers.length == 0"/>
-                    <button data-ng-click="massApplyFlexion()" data-ng-disabled="massSelectedFingers.length == 0">Mass Apply Flexion</button>
+                    <div class="col-lg-6 col-md-6">
+                        <h2>Mass Update</h2>
+                        <input type="number" data-ng-model="massFlexion" data-ng-disabled="massSelectedFingers.length == 0"/>
+                        <button data-ng-click="massApplyFlexion()" data-ng-disabled="massSelectedFingers.length == 0">Mass Apply Flexion</button>
+                    </div>
+                    <div id="boneHandDisplay" class="col-lg-6 col-md-6">
+
+                    </div>
                 </div>
 
                 <!-- Individual Finger Control -->

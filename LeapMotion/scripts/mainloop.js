@@ -1,4 +1,4 @@
-var mainLoop = function(duration, displayBonehand){
+var mainLoop = function(duration, boneHand){
 
     //var sceneAvg = duration;
     var sceneAvg = duration;
@@ -212,13 +212,17 @@ var mainLoop = function(duration, displayBonehand){
         sceneIter++;
     });
 
-    if(displayBonehand){
-        theLoop.use('boneHand', {
-            targetEl: document.body,
-            arm: false,
-            boneColor: (new THREE.Color).setHex(0x111111),
-            jointColor: (new THREE.Color).setHex(0x5daa00)
-        });
+    if(boneHand){
+        boneHand.targetEl = boneHand.targetEl ? boneHand.targetEl : document.body;
+        if(boneHand.display === true){
+            theLoop.use('boneHand', {
+                targetEl: boneHand.targetEl,
+                arm: false,
+                boneColor: (new THREE.Color).setHex(0x111111),
+                jointColor: (new THREE.Color).setHex(0x5daa00)
+            });
+        }
+
     }
 
 
