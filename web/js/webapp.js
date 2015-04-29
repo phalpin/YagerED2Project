@@ -6,6 +6,13 @@ webApp.controller('fingerCtrl', [
     function($scope, wsSvc, $rootScope, $timeout){
         $scope.client = wsSvc.start();
 
+        $scope.init = function(){
+            $timeout(function(){
+                $scope.shouldShowControls = true;
+            }, 100);
+        };
+
+
         $scope.testInit = function(){
             function getFinger(name){
                 return {
@@ -19,7 +26,11 @@ webApp.controller('fingerCtrl', [
                 $scope.fingers[finger.name] = finger;
             }
 
+            $scope.init();
+
         };
+
+        $scope.shouldShowControls = false;
 
         $scope.timeBetweenLoops = 10;
         $scope.fingers = {};
@@ -29,7 +40,7 @@ webApp.controller('fingerCtrl', [
         $scope.massFlexion = 0;
 
         //$scope.leapMotion = new mainLoop($scope.timeBetweenLoops, {display: true, targetEl: $('#boneHandDisplay')[0]});
-        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, {display: true, targetEl: $('#bonehanddisplay')[0]});
+        $scope.leapMotion = new mainLoop($scope.timeBetweenLoops, {display: true, targetEl: $('#display')[0], arm: false});
         $scope.leapMotion.on('update', function(){
             if($scope.shouldUpdateFromLeapMotion){
                 $scope.leapmotionUpdate();

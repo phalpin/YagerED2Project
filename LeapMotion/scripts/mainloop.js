@@ -217,7 +217,7 @@ var mainLoop = function(duration, boneHand){
         if(boneHand.display === true){
             theLoop.use('boneHand', {
                 targetEl: boneHand.targetEl,
-                arm: false,
+                arm: boneHand.arm || false,
                 boneColor: (new THREE.Color).setHex(0x111111),
                 jointColor: (new THREE.Color).setHex(0x5daa00)
             });
